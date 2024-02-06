@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   ];
 
-   // Create an array that will hold pet name and associated breed
+  // Create an array that will hold pet name and associated breed
   const petBreed = [];
   // Loop through the petsData array and push the name and breed to the petBreed array
   petsData.forEach((pet) => {
@@ -110,7 +110,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Evan's more info button event listener
   moreInfo.addEventListener('click', () => {
-    const dogName = document.getElementById('dogName').textContent; // Possible that this won't grab the breed correctly
+    const dogName = document.getElementById('dogName').textContent; // Gets the name of the dog from the card (may be bugged)
+    // Gets the breed of the specific dog
+    const breed = () => {
+      for (let i = 0; i < petBreed.length; i++) {
+        if (petBreed[i].name === dogName) {
+          return petBreed[i].breed;
+        }
+      }
+    };
     url = 'http://localhost:3001/api/dogInfo/'; // This is the route that will be created in the backend
 
     fetch(url, {
@@ -119,14 +127,13 @@ document.addEventListener('DOMContentLoaded', () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(breed),
-    })
-    .then((response) => {
+    }).then((response) => {
       // Parse the response
       const breedInfo = {
         weight: response.weight,
         height: response.height,
         life_span: response.life_span,
-        temperament: response.temperament
+        temperament: response.temperament,
       };
 
       // Create a drop down with breed info
@@ -142,9 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
       `;
-
-      });
-    })
+    });
   });
 
   function updateCarousel() {
