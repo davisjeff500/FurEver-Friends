@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     card.className = 'card';
     card.innerHTML = `
         <header class="card-header">
-          <p id="dogName" class="card-header-title">
+          <p class="card-header-title">
             ${pet.name}
           </p>
           <button class="heart-button ${pet.saved ? 'saved' : ''}">
@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const leftArrow = document.querySelector('.left-arrow');
   const rightArrow = document.querySelector('.right-arrow');
   const moreInfo = document.querySelector('.more-info'); // Evan's more info button
+  // When the more info button is created, it needs an id that matches the dog's name and a class of more-info
   let currentIndex = 0;
 
   leftArrow.addEventListener('click', () => {
@@ -110,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Evan's more info button event listener
   moreInfo.addEventListener('click', () => {
-    const dogName = document.getElementById('dogName').textContent; // Gets the name of the dog from the card (may be bugged)
+    const dogName = event.target.id; // Gets the name of the specific dog
     // Gets the breed of the specific dog
     const breed = () => {
       for (let i = 0; i < petBreed.length; i++) {
