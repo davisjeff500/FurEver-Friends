@@ -18,14 +18,15 @@ Dog.init(
     description: {
     type: DataTypes.STRING,
     },
+    // TODO: possibly change integer to string?
     age: {
         type: DataTypes.INTEGER,
     },
     size: {
-        type: DataType.STRING,
+        type: DataTypes.STRING,
     },
     kidFriendly: {
-        type: DataType.BOOLEAN,
+        type: DataTypes.BOOLEAN,
     },
     user_id: {
     type: DataTypes.INTEGER,
