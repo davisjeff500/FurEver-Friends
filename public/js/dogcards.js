@@ -30,6 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
       saved: false,
     },
   ];
+
+   // Create an array that will hold pet name and associated breed
+  const petBreed = [];
+  // Loop through the petsData array and push the name and breed to the petBreed array
+  petsData.forEach((pet) => {
+    petBreed.push({ name: pet.name, breed: pet.breed });
+  });
+
   //Creating Cards//
 
   // Select the carousel content div
@@ -42,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     card.className = 'card';
     card.innerHTML = `
         <header class="card-header">
-          <p class="card-header-title">
+          <p id="dogName" class="card-header-title">
             ${pet.name}
           </p>
           <button class="heart-button ${pet.saved ? 'saved' : ''}">
@@ -57,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="card-content">
           <div class="content">
             <strong>Age:</strong> ${pet.age}<br>
-            <strong id="breed">Breed:</strong> ${pet.breed}<br>
+            <strong>Breed:</strong> ${pet.breed}<br>
             <strong>Description:</strong> ${pet.description}
           </div>
         </div>
@@ -102,8 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Evan's more info button event listener
   moreInfo.addEventListener('click', () => {
-    const breed = document.getElementById('breed').textContent;
-    url = 'http://localhost:3001/api/dogs/';
+    const dogName = document.getElementById('dogName').textContent; // Possible that this won't grab the breed correctly
+    url = 'http://localhost:3001/api/dogInfo/'; // This is the route that will be created in the backend
 
     fetch(url, {
       method: 'GET',
@@ -120,6 +128,21 @@ document.addEventListener('DOMContentLoaded', () => {
         life_span: response.life_span,
         temperament: response.temperament
       };
+
+      // Create a drop down with breed info
+      const breedInfoDiv = document.createElement('div');
+      breedInfoDiv.className = 'breed-info';
+      breedInfoDiv.innerHTML = `
+        <div class="breed-info-content">
+          <div class="breed-info-content">
+            <strong>Average Weight:</strong> ${breedInfo.weight}<br>
+            <strong>Average Height:</strong> ${breedInfo.height}<br>
+            <strong>Typical Life Span:</strong> ${breedInfo.life_span}<br>
+            <strong>Temperament:</strong> ${breedInfo.temperament}
+          </div>
+        </div>
+      `;
+
       });
     })
   });
