@@ -1,23 +1,11 @@
-const express = require('express');
-const axios = require('axios'); // for making HTTP requests
-const bodyParser = require('body-parser');
+const router = require('express').Router();
 
-const app = express();
-app.use(bodyParser.json());
+const apiRoutes = require('./api');
+const homeRoutes = require('./homeRoutes');
 
-app.get('/dogs', async (req, res) => {
-  try {
-    const response = await axios.get('https://thedogapi.com./breeds');
-    const dogData = response.data;
+router.use('/', homeRoutes);
+router.use('/api', apiRoutes);
 
-    res.status(200).json(dogData);
-  } catch (error) {
-    console.error('Error fetching dog data:', error);
-    res.status(500).send('Error fetching dog data');
-  }
-});
+module.exports = router;
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+// Code that used to live in this file has been moved to controllers/api/axiosDogs.js
