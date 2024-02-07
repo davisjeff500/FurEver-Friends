@@ -173,7 +173,7 @@
 
 .card {
   width: 500px; /* Adjusts width of individual cards */
-  margin: 0 10px; /* Gives space between cards */
+  margin: 0 10px; 
   border-radius: 5%;
   background-color: var(--lightblue);
 }
@@ -228,4 +228,54 @@ color: var(--bright);
 
 .heart-button.saved i {
   color: var(--bright); 
+}
+
+  /* Style for "More Info" button on dog cards */
+
+.button.more-info {
+  background-color: var(--main); 
+  color: var(--white); 
+  border: none; 
+  cursor: pointer; 
+  font-weight: bold; 
+  margin-top: 0.5rem; 
+  transition: background-color 0.3s ease; 
+}
+
+/* hover effect for "More Info" button */
+.button.more-info:hover {
+  background-color: var(--bright); 
+  color: var(--dark); 
+}
+
+.breed-info .title {
+  text-align: center; 
+  font-weight: bold; 
+  margin-top: 1rem; 
+}
+
+/*saved pets section*/
+#saved-pets-section {
+  background-color: var(--bright); 
+  color: var(--white); 
+  margin-top: 2rem; 
+  width: 90%;
+  padding: 1rem;
+  border-radius: 20px;
+  display: none; /* Keeps Initially hidden */
+}
+
+#saved-pets-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+  gap: 1rem;
+  padding: 1rem;
+  width: 100%; 
+}
+
+#saved-pets-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+  gap: 2rem; 
+  padding: 1rem;
 }
