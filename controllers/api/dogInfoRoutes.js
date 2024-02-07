@@ -50,6 +50,7 @@ router.get('/', (req, res) => {
         breed: dog.name,
         life_span: dog.life_span,
         temperament: dog.temperament,
+        image: dog.image.url,
       };
       // Send the new object as a json response
       res.json(dogData);
