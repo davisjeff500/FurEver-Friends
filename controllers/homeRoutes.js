@@ -107,8 +107,34 @@ router.get('/dog/:id', async (req, res) => {
   }
 });
 
-// Use withAuth middleware to prevent access to route
+//if user is not logged in they are directed to login page
 router.get('/profile', withAuth, async (req, res) => {
+  try {
+    if (!req.session.logged_in) {
+      res.redirect('/login');
+      return;
+    }
+    // Find the logged in user based on the session ID
+    const userData = await User.findByPk(req.session.user_id, {
+      attributes: { exclude: ['password'] },
+      include: [{ model: Dog }],
+    });
+
+    const user = userData.get({ plain: true });
+    /// if ( userData.hasKids === true) {
+    // user = userData.dogs.filter(dog => dog.kidFirendy !== true) // filters out non kid friendly dogs from dog array
+    //}
+    res.render('profile.handlebars', {
+      user,
+      logged_in: true,
+    });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// Use withAuth middleware to prevent access to route
+router.get('/temporary', withAuth, async (req, res) => {
   try {
     // Find the logged in user based on the session ID
     const userData = await User.findByPk(req.session.user_id, {
