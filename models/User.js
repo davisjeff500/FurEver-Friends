@@ -41,7 +41,8 @@ User.init(
     },
     hasPets: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      //allowNull: false,
+      defaultValue: 1,
       validate: {
         min: 1,
         max: 4,
@@ -58,13 +59,14 @@ User.init(
       // allowNull: false,
     },
     fostering: {
-      /// age
+      /// age > 9
       type: DataTypes.BOOLEAN,
       // allowNull: false,
     },
     previousExp: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 1,
       validate: {
         min: 1,
         max: 4,

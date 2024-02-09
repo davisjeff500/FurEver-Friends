@@ -121,6 +121,7 @@ router.get('/profile', withAuth, async (req, res) => {
     });
 
     const user = userData.get({ plain: true });
+    console.log(user)
     /// if ( userData.hasKids === true) {
     // user = userData.dogs.filter(dog => dog.kidFirendy !== true) // filters out non kid friendly dogs from dog array
     //}
@@ -146,7 +147,7 @@ router.get('/temporary', withAuth, async (req, res) => {
     /// if ( userData.hasKids === true) {
     // user = userData.dogs.filter(dog => dog.kidFirendy !== true) // filters out non kid friendly dogs from dog array
     //}
-    if (user.seniorDog === false) {
+    if (user.fostering === false) {
       res.redirect('/youngDogs');
       return;
     } else {

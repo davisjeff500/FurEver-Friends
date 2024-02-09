@@ -1,26 +1,29 @@
 [
   {
     "name": "Sal",
+    "userName":"Sally",
     "email": "sal@hotmail.com",
     "password": "password12345",
     "backyard": true,
     "hasKids": true,
-    "seniorDog": false
+    "fostering": false
   },
   {
     "name": "Lernantino",
+    "userName":"Lern",
     "email": "lernantino@gmail.com",
     "password": "password12345",
     "backyard": false,
     "hasKids": false,
-    "seniorDog": true
+    "fostering": true
   },
   {
     "name": "Amiko",
+    "userName":"Thrustmaster",
     "email": "amiko2k20@aol.com",
     "password": "password12345",
     "backyard": true,
     "hasKids": true,
-    "seniorDog": true
+    "fostering": true
   }
 ]

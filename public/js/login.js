@@ -28,14 +28,22 @@ const signupFormHandler = async (event) => {
   const name = document.querySelector('#name-signup').value.trim();
   const email = document.querySelector('#email-signup').value.trim();
   const password = document.querySelector('#password-signup').value.trim();
-  const seniorDog = true
+  const fostering = true
+  // const userName = input value from login.handlebars sign up section
+  // hasPets = ''
+  //fenceYard = ''
+  //hasKids =''
+  //previousExp = ''
+  //anythingElse =''
+  //why =  ''
+
   //const seniorDog = document.getElementById("input[name='seniorDog']:checked").value
   console.log(email, seniorDog)
 
   if (name && email && password) {
-    const response = await fetch('/api/users', {
+    const response = await fetch('/api/users/', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password,seniorDog }),
+      body: JSON.stringify({ name, email, password, fostering }), /// added input values to body object as left
       headers: { 'Content-Type': 'application/json' },
     });
 

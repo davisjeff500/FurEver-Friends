@@ -19,8 +19,9 @@
     <p class="title">FurEver Friends</p> 
   </div>
   <div class="navbar-end">
-    <a class="navbar-item" href="#">Login</a>
+    <a class="navbar-item" href="/login">Login</a>
     <a class="navbar-item" id="about-us-button" href="#">About Us</a>
+    <a class="navbar-item" id="logout">Logout</a>
   </div>
   </nav>
 
@@ -34,10 +35,10 @@
       
     </footer>
   </div>
-
+ 
   <!-- Render script for logged in users only -->
   {{#if logged_in}}
-  <script src="/js/logout.js">
+ <script src="/js/logout.js">
       document.addEventListener('DOMContentLoaded', () => {
         const navbarBurger = document.querySelector('.navbar-burger');
 

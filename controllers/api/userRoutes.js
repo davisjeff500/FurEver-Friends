@@ -37,9 +37,10 @@ router.post('/get-started-form', async (req, res) => {
   }
 });
 
+//api/users/
 router.post('/', async (req, res) => {
   try {
-    const userData = await User.create(req.body);
+    const userData = await User.create(req.body);// req.body grabs all inputs no need to itemize
 
     req.session.save(() => {
       req.session.user_id = userData.id;
