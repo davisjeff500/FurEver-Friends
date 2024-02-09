@@ -1,8 +1,11 @@
 const router = require('express').Router();
 require('dotenv').config();
+const cors = require('cors');
 
-router.get('/', (req, res) => {
-  const reqData = req.body.breed;
+router.use(cors());
+
+router.get('/:breed', (req, res) => {
+  const reqData = req.params.breed;
 
   if (!reqData) {
     return res
@@ -10,10 +13,19 @@ router.get('/', (req, res) => {
       .json({ ERROR: 'Please provide a dog breed for your query' });
   }
 
-  // req should be formatted as follows:
-  // {
-  //     "breed": "french bulldog"
-  // }
+  if (reqData === 'Mix' || reqData === 'mix') {
+    mixData = {
+      weight: 'Varies', // Weight of a 'Mix' breed is 'Varies'
+      height: 'Varies', // Height of a 'Mix' breed is 'Varies
+      breed: 'Mix', // Breed of a 'Mix' breed is 'Mix'
+      life_span: '10-15 years', // Average lifespan of a dog
+      temperament: 'Varies', // Temperament of a 'Mix' breed is 'Varies
+      image:
+        'https://images.unsplash.com/photo-1558322394-4d8813ceef8a?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Image of a 'Mix' breed
+    };
+
+    return res.json(mixData);
+  }
 
   // Check if the request data contains a space
   const hasSpace = reqData.includes(' ');
@@ -33,6 +45,7 @@ router.get('/', (req, res) => {
     headers: {
       'content-type': 'application/json',
       'x-api-key': process.env.API_KEY,
+      'Allow-Access-Control-Origin': '*',
     },
   })
     .then((response) => response.json())
