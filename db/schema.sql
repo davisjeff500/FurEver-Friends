@@ -1,2 +1,3 @@
-DROP DATABASE IF EXISTS userProfile_db;
-CREATE DATABASE userProfile_db;
+CREATE DATABASE users_db;
+USE users_db;
+
