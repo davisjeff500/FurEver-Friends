@@ -11,21 +11,21 @@
 </head>
 
 <body>
-  <div class="flex-column justify-space-around">
-    <header class="display-flex justify-space-between align-center p-2">
-      <h1>
-        <a href="/">FurEver Friends!</a>
-      </h1>
-      <nav>
-        <!-- Conditionally render login or logout links -->
-        {{#if logged_in}}
-        <a href="/profile">profile</a> |
-        <button class="no-button" id="logout">logout</button>
-        {{else}}
-        <a href="/login">login</a>
-        {{/if}}
-      </nav>
+  <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <img src="./Assets/Images/Logo.png" alt="FurEver Friends Logo">
+    </div>
+  <div class="navbar-center">
+    <p class="title">FurEver Friends</p> 
+  </div>
+  <div class="navbar-end">
+    <a class="navbar-item" href="#">Login</a>
+    <a class="navbar-item" id="about-us-button" href="#">About Us</a>
+  </div>
+  </nav>
+
     </header>
+    
     <main class="container container-fluid mt-5">
       <!-- Render the sub layout -->
       {{{ body }}}
@@ -37,7 +37,28 @@
 
   <!-- Render script for logged in users only -->
   {{#if logged_in}}
-  <script src="/js/logout.js"></script>
+  <script src="/js/logout.js">
+      document.addEventListener('DOMContentLoaded', () => {
+        const navbarBurger = document.querySelector('.navbar-burger');
+
+        // Function to toggle the modal
+        function toggleModal() {
+            const aboutUsModal = document.getElementById('about-us-modal');
+            aboutUsModal.classList.toggle('is-active');
+        }
+
+        // Event listener to open the modal when 'About Us' is clicked
+        const aboutUsButton = document.getElementById('about-us-button');
+        aboutUsButton.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            toggleModal();
+        });
+
+        // Event listener to close the modal when the close button is clicked
+        const modalClose = document.querySelector('.modal-close');
+        modalClose.addEventListener('click', toggleModal);
+    });
+  </script>
   {{/if}}
 </body>
 
