@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  event.preventDefault();
   //Mock Dog Data for Example, can be changed/seeded from a library when that's up and running//
   const petsData = [
     {
@@ -58,11 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   // Create an array that will hold pet name and associated breed
-  // const petBreed = [];
-  // // Loop through the petsData array and push the name and breed to the petBreed array
-  // petsData.forEach((pet) => {
-  //   petBreed.push({ name: pet.name, breed: pet.breed });
-  // });
+  const petBreed = [];
+  // Loop through the petsData array and push the name and breed to the petBreed array
+  petsData.forEach((pet) => {
+    petBreed.push({ name: pet.name, breed: pet.breed });
+  });
 
   //Creating Cards
   // Select the carousel content div
@@ -74,8 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
   async function createCard(pet) {
     // Need to create a new fetch request to thedogapi get image for dog corresponding to breed
     // Fetch request to thedogapi
-    const dogImage = await getDogImage(pet.breed);
+    const dogInfo = await getDogInfo(pet.breed);
+    const dogImage = dogInfo.image;
     console.log(dogImage);
+
     const card = document.createElement('div');
     card.className = 'card';
     card.dataset.name = pet.name;
@@ -110,6 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <strong>Spayed/Neutered?</strong> ${pet.spayedneutered}<br>
             <strong>Weight:</strong> ${pet.weight}<br>
             <strong>Special Medical Needs?</strong> ${pet.specialmedneeds}<br>
+            <h3>Breed Info</h3>
+            <strong>Average Weight:</strong> ${dogInfo.weight}<br>
+            <strong>Average Height:</strong> ${dogInfo.height}<br>
+            <strong>Typical Life Span:</strong> ${dogInfo.life_span}<br>
+            <strong>Temperament:</strong> ${dogInfo.temperament}<br>
           </div>
         </div>
       </div>
@@ -190,8 +196,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCarousel();
   });
 
-  // Evan's more info button event listener
-  moreInfo.addEventListener('click', (event) => {
+  // more info button event listener
+  moreInfo.addEventListener('click', async (event) => {
     const dogName = event.target.id; // Gets the name of the specific dog
     // Gets the breed of the specific dog
     const breed = () => {
@@ -201,73 +207,60 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     };
-    url = 'http://localhost:3001/api/dogInfo/';
 
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(breed),
-    })
-      .then((response) => {
-        // Parse the response
-        const breedInfo = {
-          weight: response.weight,
-          height: response.height,
-          life_span: response.life_span,
-          temperament: response.temperament,
-        };
-
-        // Create a drop down with breed info (added a header in here that should say breed info above breed info when the backend is connected)
-        const breedInfoDiv = document.createElement('div');
-        breedInfoDiv.className = 'breed-info-content';
-        breedInfoDiv.innerHTML = `
+    let dogData = await getDogInfo(breed);
+    // console.log(dogData);
+    const additionalInfoDiv = card.querySelector('.additional-info');
+    if (dogData) {
+      let breedInfo = {
+        // This object contains the breed information
+        weight: dogData.weight,
+        height: dogData.height,
+        life_span: dogData.life_span,
+        temperament: dogData.temperament,
+      };
+      // console.log(breedInfo);
+      // Create a drop down with breed info (added a header in here that should say breed info above breed info when the backend is connected)
+      const breedInfoDiv = document.createElement('div');
+      breedInfoDiv.className = 'breed-info-content';
+      breedInfoDiv.innerHTML = `
             <h3 class="title is-4 has-text-centered">Breed Info</h3>
             <strong>Average Weight:</strong> ${breedInfo.weight}<br>
             <strong>Average Height:</strong> ${breedInfo.height}<br>
             <strong>Typical Life Span:</strong> ${breedInfo.life_span}<br>
-            <strong>Temperament:</strong> ${breedInfo.temperament}
-          </div>
-        </div>
-      `;
-        //appending breed info to the card when the more info button is clicked
-        const additionalInfoDiv = card.querySelector('.additional-info');
-        additionalInfoDiv.appendChild(breedInfoDiv);
+            <strong>Temperament:</strong> ${breedInfo.temperament}`;
+      //appending breed info to the card when the more info button is clicked
+      additionalInfoDiv.appendChild(breedInfoDiv);
+    }
 
-        const moreInfoBtn = card.querySelector('.more-info');
-        moreInfoBtn.textContent = 'Less Info';
+    const moreInfoBtn = card.querySelector('.more-info');
+    moreInfoBtn.textContent = 'Less Info';
 
-        additionalInfoDiv.classList.remove('is-hidden');
-      })
-      .catch((error) => {
-        console.error('Error fetching breed info:', error);
-      });
+    additionalInfoDiv.classList.remove('is-hidden');
   });
-});
 
-//caruousel functionality
-function updateCarousel() {
-  const cardWidth = document.querySelector('.card').offsetWidth;
-  const newTransform = currentIndex * -(cardWidth + 20);
-  carouselContent.style.transform = `translateX(${newTransform}px)`;
+  //caruousel functionality
+  function updateCarousel() {
+    const cardWidth = document.querySelector('.card').offsetWidth;
+    const newTransform = currentIndex * -(cardWidth + 20);
+    carouselContent.style.transform = `translateX(${newTransform}px)`;
 
-  // Update classes for centered card
-  document
-    .querySelectorAll('.carousel-content .card')
-    .forEach((card, index) => {
-      if (index === currentIndex) {
-        card.classList.add('is-centered');
-      } else {
-        card.classList.remove('is-centered');
-      }
-    });
-}
+    // Update classes for centered card
+    document
+      .querySelectorAll('.carousel-content .card')
+      .forEach((card, index) => {
+        if (index === currentIndex) {
+          card.classList.add('is-centered');
+        } else {
+          card.classList.remove('is-centered');
+        }
+      });
+  }
 
-updateCarousel();
+  updateCarousel();
 
-function getDogImage(breed) {
-  // Fetch request to thedogapi
+  function getDogInfo(breed) {
+    // Fetch request to thedogapi
     return fetch(`http://localhost:3001/api/dogInfo/${breed}`, {
       method: 'GET',
       headers: {
@@ -278,11 +271,11 @@ function getDogImage(breed) {
       .then((response) => response.json())
       .then((data) => {
         // Pull the image from the response
-        dogImage = data.image;
-        console.log(dogImage);
-        return dogImage;
+        console.log(data);
+        return data;
       })
       .catch((error) => {
         console.error('Error fetching dog image:', error);
       });
-  };
+  }
+});
