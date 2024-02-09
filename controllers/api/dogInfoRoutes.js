@@ -1,8 +1,11 @@
 const router = require('express').Router();
 require('dotenv').config();
+const cors = require('cors');
 
-router.get('/', (req, res) => {
-  const reqData = req.body.breed;
+router.use(cors());
+
+router.get('/:breed', (req, res) => {
+  const reqData = req.params.breed;
 
   if (!reqData) {
     return res
@@ -33,6 +36,7 @@ router.get('/', (req, res) => {
     headers: {
       'content-type': 'application/json',
       'x-api-key': process.env.API_KEY,
+      'Allow-Access-Control-Origin': '*',
     },
   })
     .then((response) => response.json())
