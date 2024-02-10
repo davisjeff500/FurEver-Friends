@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { User } = require('../../models');
 
-router.post('/get-started-form', async (req, res) => {
+router.post('/api/users', async (req, res) => {
   const {
     name,
     userName,
