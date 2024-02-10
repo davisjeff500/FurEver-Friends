@@ -1,26 +1,39 @@
-// CREATE DATABASE IF NOT EXISTS users_db;
-// USE users_db;
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../config/connection');
 
-// CREATE TABLE users (
-//     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-//     name VARCHAR(255) NOT NULL,
-//     userName VARCHAR(255) NOT NULL UNIQUE,
-//     email VARCHAR(255) NOT NULL UNIQUE,
-//     password VARCHAR(255) NOT NULL,
-//     fostering BOOLEAN,
-//     hasPets INT CHECK (hasPets >= 1 AND hasPets <= 4),
-//     fencedYard BOOLEAN,
-//     hasKids BOOLEAN,
-//     previousExp INT CHECK (previousExp >= 1 AND previousExp <= 4),
-//     anythingElse TEXT,
-//     why TEXT,
-//     createdAt TIMESTAMP,
-//     updatedAt TIMESTAMP
-// );
-// CREATE TABLE sessions (
-//   sid VARCHAR(255) PRIMARY KEY,
-//   expires TIMESTAMP,
-//   data TEXT,
-//   createdAt TIMESTAMP,
-//   updatedAt TIMESTAMP
-// );
+class Session extends Model {}
+
+Session.init(
+  {
+    sid: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      primaryKey: true,
+    },
+    expires: {
+      type: DataTypes.DATE,
+    },
+    data: {
+      type: DataTypes.TEXT,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+  },
+  {
+    sequelize,
+    timestamps: true,
+    freezeTableName: true,
+    underscored: true,
+    modelName: 'session',
+  }
+);
+
+module.exports = Session;
