@@ -74,34 +74,44 @@ const newFormHandler = async (event) => {
     anythingElse &&
     why
   ) {
-    const response = await fetch(`http://localhost:5501/api/users`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        userName,
-        email,
-        password,
-        fostering,
-        hasPets,
-        hasKids,
-        fencedYard,
-        previousExp,
-        anythingElse,
-        why,
-      }),
-    });
-    console.log(await response.json());
-    if (response.ok) {
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          userName,
+          email,
+          password,
+          fostering,
+          hasPets,
+          hasKids,
+          fencedYard,
+          previousExp,
+          anythingElse,
+          why,
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 405) {
+          alert('Method Not Allowed');
+        } else {
+          alert('Failed to create user');
+        }
+        return;
+      }
+
+     
+
       document.location.replace('/profile');
-    } else {
-      alert('Failed to create user');
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
     }
   }
 };
-
 document
   .getElementById('get-started-form')
   .addEventListener('submit', newFormHandler);
