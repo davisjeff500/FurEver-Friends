@@ -74,7 +74,7 @@ const newFormHandler = async (event) => {
     anythingElse &&
     why
   ) {
-    const response = await fetch(`http://localhost:5501/api/users`, {
+    fetch(`api/userRoutes`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -92,16 +92,21 @@ const newFormHandler = async (event) => {
         anythingElse,
         why,
       }),
-    });
-    console.log(await response.json());
-    if (response.ok) {
-      document.location.replace('/profile');
-    } else {
-      alert('Failed to create user');
-    }
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        if (data) {
+          let jsonData = JSON.parse(data);
+          console.log(jsonData);
+          if (jsonData.ok) {
+            document.location.replace('/profile');
+          } else {
+            alert('Failed to create user');
+          }
+        } else {
+          console.log('Empty response');
+        }
+      })
+      .catch((error) => console.error('Error:', error));
   }
 };
-
-document
-  .getElementById('get-started-form')
-  .addEventListener('submit', newFormHandler);
