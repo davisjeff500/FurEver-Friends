@@ -16,13 +16,45 @@ const app = express();
 
 app.use(session(sess));
 
+//app.use(
+  //cors({
+ //  origin: 'http://127.0.0.1:5502', // or the specific origin you want to allow change to heroku in production
+ //   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//    allowedHeaders: ['Content-Type', 'Authorization'],
+//  })
+//);
+// const PORT = process.env.PORT || 5502;
+
+
+//new code for multiple environments
+// Allow requests from specific origins based on the environment
+const allowedOrigins = process.env.NODE_ENV === 'production' ? ['https://furrever-friends-eb917cf35e54.herokuapp.com'] : ['http://127.0.0.1:5502'];
+
 app.use(
   cors({
-    origin: 'http://127.0.0.1:5502', // or the specific origin you want to allow change to heroku in production
+    origin: function (origin, callback) {
+      // Check if the request origin is in the list of allowed origins
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+
+// Your routes and other configurations...
+
+const PORT = process.env.PORT || 5502;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+
+
+
 
 // Log every request
 app.use((req, res, next) => {
@@ -30,7 +62,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const PORT = process.env.PORT || 5502;
+
 
 // Set up Handlebars.js engine with custom helpers
 const hbs = exphbs.create({ helpers });
