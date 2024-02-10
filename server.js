@@ -9,14 +9,16 @@ const exphbs = require('express-handlebars');
 const helpers = require('./utils/helpers');
 const cors = require('cors');
 
-const sequelize = require('./config/connection');
+const sequelize = require('./config/connection.js');
 const { sess } = require('./models/session');
 
 const app = express();
 
+app.use(session(sess));
+
 app.use(
   cors({
-    origin: 'http://127.0.0.1:5501', // or the specific origin you want to allow change to heroku in production
+    origin: 'http://127.0.0.1:5502', // or the specific origin you want to allow change to heroku in production
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
@@ -28,10 +30,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Use the session middleware
-app.use(session(sess));
-
-const PORT = process.env.PORT || 5501;
+const PORT = process.env.PORT || 5502;
 
 // Set up Handlebars.js engine with custom helpers
 const hbs = exphbs.create({ helpers });
