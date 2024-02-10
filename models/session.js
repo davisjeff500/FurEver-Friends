@@ -1,35 +1,26 @@
-// session.js
+CREATE DATABASE IF NOT EXISTS users_db;
+USE users_db;
 
-const session = require('express-session');
-const SequelizeStore = require('connect-session-sequelize')(session.Store);
-const Sequelize = require('sequelize');
-
-const sequelize = require('../config/connection');
-
-// Define the Session model
-const Session = sequelize.define('Session', {
-  sid: {
-    type: Sequelize.STRING,
-    primaryKey: true,
-  },
-  expires: Sequelize.DATE,
-  data: Sequelize.STRING(50000),
-});
-
-const sess = {
-  secret: 'Super secret secret',
-  cookie: {},
-  resave: false,
-  saveUninitialized: true,
-  store: new SequelizeStore({
-    db: sequelize,
-  }),
-};
-
-// Sync the Session model with the database
-Session.sync();
-
-module.exports = {
-  sess: sess,
-  Session: Session,
-};
+CREATE TABLE users (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    userName VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    fostering BOOLEAN,
+    hasPets INT CHECK (hasPets >= 1 AND hasPets <= 4),
+    fencedYard BOOLEAN,
+    hasKids BOOLEAN,
+    previousExp INT CHECK (previousExp >= 1 AND previousExp <= 4),
+    anythingElse TEXT,
+    why TEXT,
+    createdAt TIMESTAMP,
+    updatedAt TIMESTAMP
+);
+CREATE TABLE sessions (
+  sid VARCHAR(255) PRIMARY KEY,
+  expires TIMESTAMP,
+  data TEXT,
+  createdAt TIMESTAMP,
+  updatedAt TIMESTAMP
+);

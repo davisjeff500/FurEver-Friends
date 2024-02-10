@@ -5,7 +5,7 @@ module.exports = {
     database: 'users_db',
     host: '127.0.0.1',
     dialect: 'mysql',
-    port: 5001,
+    port: 3306,
   },
   // other environments...
 };
