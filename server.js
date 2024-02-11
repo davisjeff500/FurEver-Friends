@@ -28,7 +28,7 @@ app.use(session(sess));
 
 //new code for multiple environments
 // Allow requests from specific origins based on the environment
-const allowedOrigins = process.env.NODE_ENV === 'production' ? ['https://furrever-friends-eb917cf35e54.herokuapp.com'] : ['http://127.0.0.1:5502'];
+const allowedOrigins = process.env.NODE_ENV === 'production' ? ['https://fur-everfriends.herokuapp.com'] : ['http://127.0.0.1:5502'];
 
 app.use(
   cors({
