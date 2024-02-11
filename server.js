@@ -9,6 +9,7 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const helpers = require('./utils/helpers');
 const cors = require('cors');
+const routes = require('./controllers');
 
 const sequelize = require('./config/connection.js');
 // const { sess } = require('./models/session'); commented out
@@ -17,22 +18,20 @@ const app = express();
 
 // app.use(session(sess)); commented out
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const hbs = exphbs({
   helpers: helpers,
-  extname: '.handlebars', 
+  extname: '.handlebars',
   defaultLayout: 'main', // default layout
   layoutsDir: path.join(__dirname, 'views/layouts'), // layouts directory
-  partialsDir: path.join(__dirname, 'views/partials') // partials directory for navbar
+  partialsDir: path.join(__dirname, 'views/partials'), // partials directory for navbar
 });
 
 // Register `hbs.engine` with the Express app
 app.engine('handlebars', hbs);
 app.set('view engine', 'handlebars');
-
 
 // Log every request
 app.use((req, res, next) => {
@@ -49,31 +48,34 @@ app.use(
   })
 );
 
-
 // Serve static files from the 'public' directory (for images and CSS)
-app.use(express.static('public', {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css');
-    }
-  }
-}));
+app.use(
+  express.static('public', {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+      }
+    },
+  })
+);
 
 // Update session configuration
-app.use(session({
-  secret: process.env.SESSION_SECRET, // Set a session secret in your .env file - this needs to be done and match a password you set in the Heroku website @Jeff
-  store: new SequelizeStore({
-    db: sequelize,
-  }),
-  resave: false,
-  saveUninitialized: false, 
-  cookie: {
-    secure: process.env.NODE_ENV === 'production', 
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET, // Set a session secret in your .env file - this needs to be done and match a password you set in the Heroku website @Jeff
+    store: new SequelizeStore({
+      db: sequelize,
+    }),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  })
+);
 
-
+app.use(routes);
 
 // Define a route for the root path to render the 'homepage' view
 app.get('/', (req, res) => {
@@ -86,11 +88,10 @@ app.use('/api/users', userRoutes);
 
 const viewRoutes = require('./controllers/views');
 
-
 // Define routes
 app.use('/', viewRoutes);
 
-const PORT = process.env.PORT || 5502;
+const PORT = process.env.PORT || 3001;
 sequelize
   .authenticate()
   .then(() => {

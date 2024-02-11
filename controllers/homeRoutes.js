@@ -24,6 +24,7 @@ router.get('/', async (req, res) => {
       dogs,
       logged_in: req.session.logged_in,
     });
+    console.log('Rendered homepage');
   } catch (err) {
     res.status(500).json(err);
   }
@@ -171,6 +172,16 @@ router.get('/login', (req, res) => {
   }
 
   res.render('login');
+});
+
+router.get('/getStarted', async (req, res) => {
+  try {
+    console.log('Get Started');
+
+    res.render('yourInfo.handlebars');
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
