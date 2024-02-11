@@ -1,8 +1,9 @@
 require('dotenv').config();
 
-const mysql = require('mysql');
+// const mysql = require('mysql'); commented out
 const Sequelize = require('sequelize');
 const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const path = require('path');
 const express = require('express');
 const exphbs = require('express-handlebars');
@@ -10,50 +11,27 @@ const helpers = require('./utils/helpers');
 const cors = require('cors');
 
 const sequelize = require('./config/connection.js');
-const { sess } = require('./models/session');
+// const { sess } = require('./models/session'); commented out
 
 const app = express();
 
-app.use(session(sess));
-
-//app.use(
-  //cors({
- //  origin: 'http://127.0.0.1:5502', // or the specific origin you want to allow change to heroku in production
- //   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//    allowedHeaders: ['Content-Type', 'Authorization'],
-//  })
-//);
-// const PORT = process.env.PORT || 5502;
+// app.use(session(sess)); commented out
 
 
-//new code for multiple environments
-// Allow requests from specific origins based on the environment
-const allowedOrigins = process.env.NODE_ENV === 'production' ? ['https://fur-everfriends.herokuapp.com'] : ['http://127.0.0.1:5502'];
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Check if the request origin is in the list of allowed origins
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
-
-// Your routes and other configurations...
-
-const PORT = process.env.PORT || 5502;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const hbs = exphbs({
+  helpers: helpers,
+  extname: '.handlebars', 
+  defaultLayout: 'main', // default layout
+  layoutsDir: path.join(__dirname, 'views/layouts'), // layouts directory
+  partialsDir: path.join(__dirname, 'views/partials') // partials directory for navbar
 });
 
-
-
+// Register `hbs.engine` with the Express app
+app.engine('handlebars', hbs);
+app.set('view engine', 'handlebars');
 
 
 // Log every request
@@ -62,42 +40,100 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
-// Set up Handlebars.js engine with custom helpers
-const hbs = exphbs.create({ helpers });
-
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-
-const userRoutes = require('./controllers/api/userRoutes.js');
-const viewRoutes = require('./controllers/views');
-
-// Allow POST method for /api/users endpoint
+// Set up CORS
 app.use(
-  '/api/users',
-  (req, res, next) => {
-    if (req.method == 'POST' || req.method == 'OPTIONS') {
-      next(); // Allow POST and OPTIONS requests
-    } else {
-      res.status(405).send('Method Not Allowed'); // Reject other methods
-    }
-  },
-  userRoutes
+  cors({
+    origin: 'http://127.0.0.1:5502', // need to put the link of the actual heroku app here
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
 );
 
+
+// Serve static files from the 'public' directory (for images and CSS)
+app.use(express.static('public', {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
+
+// Update session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET, // Set a session secret in your .env file - this needs to be done and match a password you set in the Heroku website @Jeff
+  store: new SequelizeStore({
+    db: sequelize,
+  }),
+  resave: false,
+  saveUninitialized: false, 
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', 
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+
+
+// Define a route for the root path to render the 'homepage' view
+app.get('/', (req, res) => {
+  res.render('homepage', { title: 'Fur-Ever Friends' });
+});
+
+// Include your routes
+const userRoutes = require('./controllers/api/userRoutes');
+app.use('/api/users', userRoutes);
+
+const viewRoutes = require('./controllers/views');
+
+
+// Define routes
 app.use('/', viewRoutes);
 
+const PORT = process.env.PORT || 5502;
 sequelize
   .authenticate()
-  .then(() => console.log('Database connected.'))
+  .then(() => {
+    console.log('Database connected.');
+    // force: false is a safer option to avoid losing data
+    return sequelize.sync({ force: false });
+  })
+  .then(() => {
+    app.listen(PORT, () => console.log(`Now listening on port ${PORT}`));
+  })
   .catch((err) => console.error('Unable to connect to the database:', err));
 
-// force false in production
-sequelize.sync({ force: process.env.NODE_ENV !== 'production' }).then(() => {
-  app.listen(PORT, () => console.log(`Now listening on port ${PORT}`));
-});
+
+
+
+// Set up Handlebars.js engine with custom helpers - commented all this out but kept it in case we need it later
+
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+// app.use(express.static(path.join(__dirname, 'public')));
+
+
+// // Allow POST method for /api/users endpoint
+// app.use(
+//   '/api/users',
+//   (req, res, next) => {
+//     if (req.method == 'POST' || req.method == 'OPTIONS') {
+//       next(); // Allow POST and OPTIONS requests
+//     } else {
+//       res.status(405).send('Method Not Allowed'); // Reject other methods
+//     }
+//   },
+//   userRoutes
+// );
+
+// app.use('/', viewRoutes);
+
+// sequelize
+//   .authenticate()
+//   .then(() => console.log('Database connected.'))
+//   .catch((err) => console.error('Unable to connect to the database:', err));
+
+// // force false in production
+// sequelize.sync({ force: process.env.NODE_ENV !== 'production' }).then(() => {
+//   app.listen(PORT, () => console.log(`Now listening on port ${PORT}`));
+// });
