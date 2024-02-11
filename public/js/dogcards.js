@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getDogInfo(breed) {
     // Fetch request to thedogapi
-    return fetch(`http://localhost:3001/api/dogInfo/${breed}`, {
+    return fetch(`/api/dogInfo/${breed}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
