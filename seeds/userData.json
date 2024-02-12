@@ -1,5 +1,6 @@
 [
   {
+<<<<<<< HEAD
     "name": "Sal",
     "userName":"Sally",
     "email": "sal@hotmail.com",
@@ -25,5 +26,33 @@
     "backyard": true,
     "hasKids": true,
     "fostering": true
+=======
+    "name": "John",
+    "username": "JohnLikesCats",
+    "email": "hello@hotmail.com",
+    "password": "password",
+    "allowSenior": true
+  },
+  {
+    "name": "Jane",
+    "username": "JaneLikesDogs",
+    "email": "hello2@hotmail.com",
+    "password": "password",
+    "allowSenior": false
+  },
+  {
+    "name": "Bob",
+    "username": "BobLikesBirds",
+    "email": "hello3@hotmail.com",
+    "password": "password",
+    "allowSenior": true
+  },
+  {
+    "name": "Sally",
+    "username": "SallyLikesSnakes",
+    "email": "hello4@hotmail.com",
+    "password": "password",
+    "allowSenior": false
+>>>>>>> 34e6983aa9e8ddb874cfedaf001a3c34fb3dee74
   }
 ]

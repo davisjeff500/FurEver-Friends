@@ -20,9 +20,10 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    userName: {
+    username: {
       type: DataTypes.STRING,
       allowNull: false,
+      defaultValue: 'username',
     },
     email: {
       type: DataTypes.STRING,
@@ -39,11 +40,15 @@ User.init(
         len: [8],
       },
     },
+<<<<<<< HEAD
     
     fostering: {
       /// age > 9
+=======
+    allowSenior: {
+>>>>>>> 34e6983aa9e8ddb874cfedaf001a3c34fb3dee74
       type: DataTypes.BOOLEAN,
-      // allowNull: false,
+      allowNull: false,
     },
   },
   {
