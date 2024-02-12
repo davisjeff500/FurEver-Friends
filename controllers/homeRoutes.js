@@ -46,134 +46,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/alldogs', async (req, res) => {
-  try {
-    // Get all dogs and JOIN with user data
-    const dogsData = await Dog.findAll({
-      include: [
-        {
-          model: User,
-          attributes: ['name'],
-        },
-      ],
-    });
 
-    // Serialize data so the template can read it
-    const dogs = dogsData.map((dog) => dog.get({ plain: true }));
-    console.log(dogs);
-
-    // Pass serialized data and session flag into template
-    res.render('allDogs.handlebars', {
-      dogs, //variable we use on handlebars
-      session: req.session,
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to load dog data' });
-  }
-});
-
-router.get('/youngDogs', async (req, res) => {
-  try {
-    // Get all dogs and JOIN with user data
-    const dogsData = await Dog.findAll({
-      include: [
-        {
-          model: User,
-          attributes: ['name'],
-        },
-      ],
-    });
-
-    // Serialize data so the template can read it
-    let dogs;
-    dogs = dogsData.map((dog) => dog.get({ plain: true }));
-
-    //takes previous dogs array and filters out dogs older than age 9
-    const youngDogs = dogs.filter((dog) => dog.age < 9);
-    console.log(youngDogs);
-
-    // Pass serialized data and session flag into template
-    res.render('youngDogs.handlebars', {
-      youngDogs, //variable we use on handlebars
-      session: req.session,
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to load young dogs data' });
-  }
-});
-
-// router.get('/dogs', async (req, res) => {
-//   try {
-//     // Get all dogs and JOIN with user data
-//     // Filter old and young dogs based off of user allowSenior
-//     let dogsData;
-
-//     const user = await User.findByPk(req.session.user_id, {
-//       attributes: ['allowSenior'],
-//     });
-
-//     if (!user) {
-//       return res.status(404).json({ message: 'No user found with this id!' });
-//     }
-
-//     console.log(`User: ${user}`);
-
-//     const allowSenior = user.get('allowSenior');
-
-//     console.log(`allowSenior: ${allowSenior}`);
-
-//     if (!allowSenior) {
-//       dogsData = await Dog.findAll({
-//         where: {
-//           age: {
-//             [Op.lt]: 9,
-//           },
-//         },
-//       });
-//       console.log(`Dogs: ${dogsData}`);
-//     } else {
-//       dogsData = await Dog.findAll();
-//       // console.log(`Dogs: ${dogsData}`);
-//     }
-//     // Serialize data so the template can read it
-//     const dogs = dogsData.map((dog) => dog.get({ plain: true }));
-//     // console.log(`Plain dogs: ${JSON.stringify(dogs)}`);
-//     jsonDogs = JSON.stringify(dogs);
-//     jsonDogs = JSON.parse(jsonDogs);
-
-//     // Grab breeds from jsonDogs and put them in an array
-//     const breedArray = jsonDogs.map((dog) => dog.breed);
-//     console.log(`breedArray: ${breedArray}`);
-
-//     for (let i = 0; i < breedArray.length; i++) {
-//       await fetch(`/api/dogInfo/${breedArray[i]}`, {
-//         method: 'GET',
-//       })
-//         .then((response) => response.json())
-//         .then((data) => {
-//           jsonDogs[i].average_weight = data.weight;
-//           jsonDogs[i].average_height = data.height;
-//           jsonDogs[i].life_span = data.life_span;
-//           jsonDogs[i].typical_temperament = data.temperament;
-//           jsonDogs[i].image = data.image;
-//         })
-//         .catch((error) => {
-//           console.error('Error:', error);
-//           alert('An error occurred. Please try again.');
-//         });
-//     }
-
-//     console.log(`updated jsonDogs: ${JSON.stringify(jsonDogs)}`);
-//     // Pass serialized data and session flag into template
-//     res.render('dogs.handlebars', {
-//       jsonDogs, //variable we use on handlebars
-//       session: req.session,
-//     });
-//   } catch (err) {
-//     res.status(500).json({ error: 'Failed to load dog data' });
-//   }
-// });
-
+// Route handles rendering dogs based on user's preferences
 router.get('/dogs', async (req, res) => {
   try {
     const userId = req.session.user_id;
@@ -187,7 +61,9 @@ router.get('/dogs', async (req, res) => {
       return res.status(404).json({ message: 'No user found with this id!' });
     }
 
+    // Get the allowSenior flag from the user
     const allowSenior = user.allowSenior;
+    // Define the where condition based on the allowSenior flag
     const whereCondition = allowSenior ? {} : { age: { [Op.lt]: 9 } };
 
     // Fetch dogs based on the allowSenior flag
@@ -248,36 +124,6 @@ router.get('/profile', withAuth, async (req, res) => {
 
     res.render('profile.handlebars', {
       // user,
-      logged_in: true,
-    });
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-// Use withAuth middleware to prevent access to route
-router.get('/temporary', withAuth, async (req, res) => {
-  try {
-    // Find the logged in user based on the session ID
-    const userData = await User.findByPk(req.session.user_id, {
-      attributes: { exclude: ['password'] },
-      include: [{ model: Dog }],
-    });
-
-    const user = userData.get({ plain: true });
-    /// if ( userData.hasKids === true) {
-    // user = userData.dogs.filter(dog => dog.kidFirendy !== true) // filters out non kid friendly dogs from dog array
-    //}
-    if (user.seniorDog === false) {
-      res.redirect('/youngDogs');
-      return;
-    } else {
-      res.redirect('/alldogs');
-      return;
-    }
-
-    res.render('profile', {
-      ...user,
       logged_in: true,
     });
   } catch (err) {
