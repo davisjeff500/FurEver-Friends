@@ -9,6 +9,7 @@ const exphbs = require('express-handlebars');
 const cors = require('cors');
 const routes = require('./controllers');
 
+
 const sequelize = require('./config/connection.js');
 
 const app = express();
@@ -60,12 +61,13 @@ app.use(session({
   resave: false,
   saveUninitialized: false, 
   cookie: {
-    secure: process.env.NODE_ENV === 'production', 
+    secure: false === 'production', 
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));
 
 app.use(routes); // Use the routes defined in the 'controllers' directory
+
 
 // Define a route for the root path to render the 'homepage' view
 // app.get('/', (req, res) => {
