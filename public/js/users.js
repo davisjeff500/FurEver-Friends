@@ -1,112 +1,57 @@
-const newFormHandler = async (event) => {
+document.getElementById('get-started-form').addEventListener('submit', function(event) {
   event.preventDefault();
 
-  const name = document.querySelector('#name').value.trim();
-  const userName = document.querySelector('#userName').value.trim();
-  const email = document.querySelector('#email').value.trim();
+  // Define password and reenteredPassword before formData for validation
+  const password = document.getElementById('password').value.trim();
+  const reenteredPassword = document.getElementById('reEnterPassword').value.trim();
 
-  const password = document.querySelector('#password').value.trim();
-  const reenteredPassword = document
-    .querySelector('#reEnterPassword')
-    .value.trim();
+  // Validation checks
+  if (password !== reenteredPassword) {
+    alert('Passwords do not match.');
+    return;
+  }
 
   if (password.length < 8) {
-    alert('Password should be at least 8 characters long');
+    alert('Password must be at least 8 characters long.');
     return;
   }
 
-  if (password !== reenteredPassword) {
-    alert('Passwords must match');
-    return;
-  }
+  const formData = {
+    name: document.getElementById('name').value.trim(),
+    username: document.getElementById('username').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    password: document.getElementById('password').value.trim(),
+    reenteredPassword: document.getElementById('reEnterPassword').value.trim(), 
+    fostering: document.querySelector('input[name="fostering"]:checked').value,
+    hasPets: document.getElementById('hasPets').value, // select dropdown
+    fencedYard: document.querySelector('input[name="fencedYard"]:checked').value,
+    hasKids: document.querySelector('input[name="hasKids"]:checked').value,
+    previousExp: document.getElementById('previousExp').value, // select dropdown
+    anythingElse: document.getElementById('anythingElse').value.trim(),
+    why: document.getElementById('why').value.trim(),
+  };
 
-  // ...rest of your code...  let fostering;
-  if (document.querySelector('#fosteringYes').checked) {
-    fostering = document.querySelector('#fosteringYes').value;
-  } else if (document.querySelector('#fosteringNo').checked) {
-    fostering = document.querySelector('#fosteringNo').value;
-  } else {
-    alert(
-      'Please select whether you are interested in fostering a senior dog.'
-    );
-    return;
-  }
-  const hasPets = parseInt(document.querySelector('#hasPets').value, 10);
-  if (isNaN(hasPets)) {
-    alert('Please select a pet type.');
-    return;
-  }
-  let fencedYard = document.querySelector('input[name="fencedYard"]:checked');
-  fencedYard = fencedYard ? fencedYard.value : null;
-  let hasKids = document.querySelector('input[name="hasKids"]:checked');
-  hasKids = hasKids ? hasKids.value : null;
-  let previousExp = parseInt(document.querySelector('#previousExp').value, 10);
-  if (isNaN(previousExp) || previousExp < 1 || previousExp > 4) {
-    alert('Please select a valid experience level.');
-    return;
-  }
-  const anythingElse = document.querySelector('#anythingElse').value.trim();
-  const why = document.querySelector('#why').value.trim();
-
-  // Log form data
-  console.log(`name: ${name}`);
-  console.log(`userName: ${userName}`);
-  console.log(`email: ${email}`);
-  console.log(`password: ${password}`);
-  console.log(`fostering: ${fostering}`);
-  console.log(`hasPets: ${hasPets}`);
-  console.log(`fencedYard: ${fencedYard}`);
-  console.log(`hasKids: ${hasKids}`);
-  console.log(`previousExp: ${previousExp}`);
-  console.log(`anythingElse: ${anythingElse}`);
-  console.log(`why: ${why}`);
-
-  if (
-    name &&
-    userName &&
-    email &&
-    password &&
-    fostering !== undefined &&
-    hasPets !== undefined &&
-    fencedYard !== undefined &&
-    hasKids !== undefined &&
-    previousExp &&
-    anythingElse &&
-    why
-  ) {
-    fetch(`api/userRoutes`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        userName,
-        email,
-        password,
-        fostering,
-        hasPets,
-        hasKids,
-        fencedYard,
-        previousExp,
-        anythingElse,
-        why,
-      }),
-    })
-      .then((response) => response.text())
-      .then((data) => {
-        if (data) {
-          let jsonData = JSON.parse(data);
-          console.log(jsonData);
-          if (jsonData.ok) {
-            document.location.replace('/profile');
-          } else {
-            alert('Failed to create user');
-          }
-        } else {
-          console.log('Empty response');
-        }
-      })
-      .catch((error) => console.error('Error:', error));
-  }
-};
+  fetch(this.action, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json', // Set the content type to JSON
+    },
+    body: JSON.stringify(formData) // Convert the form data to JSON
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return response.json();
+})
+.then(data => {
+    // Redirect based on the server response
+    if (data.redirectTo) {
+      window.location.href = data.redirectTo;
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('An error occurred. Please try again.');
+  });
+});
