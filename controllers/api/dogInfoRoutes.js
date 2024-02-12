@@ -1,3 +1,4 @@
+// theDogAPI no longer being used
 const router = require('express').Router();
 require('dotenv').config();
 const cors = require('cors');
