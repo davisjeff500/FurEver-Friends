@@ -23,12 +23,6 @@ document.getElementById('get-started-form').addEventListener('submit', function(
     password: document.getElementById('password').value.trim(),
     reenteredPassword: document.getElementById('reEnterPassword').value.trim(), 
     fostering: document.querySelector('input[name="fostering"]:checked').value,
-    hasPets: document.getElementById('hasPets').value, // select dropdown
-    fencedYard: document.querySelector('input[name="fencedYard"]:checked').value,
-    hasKids: document.querySelector('input[name="hasKids"]:checked').value,
-    previousExp: document.getElementById('previousExp').value, // select dropdown
-    anythingElse: document.getElementById('anythingElse').value.trim(),
-    why: document.getElementById('why').value.trim(),
   };
 
   fetch(this.action, {
