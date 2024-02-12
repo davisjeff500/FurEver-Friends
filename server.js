@@ -79,7 +79,7 @@ app.use(routes);
 
 // Please use the homeRoutes.js file to render handlebars views. This file should only be used to set up the server and middleware.
 // Duplicating that code here will cause issues with the app.
-// I will leave this here in case someone needs this code, but it should not live in this file.
+// I will leave this here in case someone needs this code, but it should not be active in this file, and should be removed if it is not needed.
 
 
 // Define a route for the root path to render the 'homepage' view
