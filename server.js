@@ -44,14 +44,15 @@ app.use(
   })
 );
 
-// Serve static files from the 'public' directory
-app.use(express.static('public', {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css');
-    }
+// Serve static files from the 'public' directory - changed this because the java wasnt loading
+app.use(express.static(path.join(__dirname, 'public')));
+app.use((req, res, next) => {
+  if (req.path.endsWith('.css')) {
+    res.setHeader('Content-Type', 'text/css');
   }
-}));
+  next();
+});
+
 // Update your session configuration
 app.use(session({
   secret: process.env.SESSION_SECRET, // Set a session secret in your .env file
@@ -66,34 +67,7 @@ app.use(session({
   }
 }));
 
-app.use(routes); // Use the routes defined in the 'controllers' directory
-
-
-// Define a route for the root path to render the 'homepage' view
-// app.get('/', (req, res) => {
-//   res.render('homepage', { title: 'Fur-Ever Friends', session: req.session });
-// });
-
-// // Include routes
-// const userRoutes = require('./controllers/api/userRoutes');
-// app.use('/api/users', userRoutes);
-
-// const viewRoutes = require('./controllers/views');
-
-// const homeRoutes = require('./controllers/homeRoutes');
-// app.use('/', homeRoutes);
-// // For API routes
-// const apiRoutes = require('./controllers/api/index'); // might need to adjust path here
-// app.use('/api', apiRoutes);
-
-// // Route to serve dog data
-// app.get('/api/dogs', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'seeds', 'dogData.json'));
-// });
-
-
-// // Define routes
-// app.use('/', viewRoutes);
+app.use(routes); 
 
 const PORT = process.env.PORT || 5502;
 sequelize

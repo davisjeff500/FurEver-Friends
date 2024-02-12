@@ -220,6 +220,7 @@
 .carousel-content {
   display: flex;
   transition: transform 0.5s ease;
+  overflow-x: auto;
   will-change: transform;
   padding: 20px;
   justify-content: center; 
@@ -228,6 +229,7 @@
 .card {
   width: 500px; /* Adjusts width of individual cards */
   margin: 0 10px; 
+  flex: 0 0 auto;
   border-radius: 5%;
   background-color: var(--lightblue);
 }

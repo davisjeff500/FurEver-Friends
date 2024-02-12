@@ -6,27 +6,11 @@ const { Op, json } = require('sequelize');
 const path = require('path');
 const dataPath = path.join(__dirname, '..', 'seeds', 'dogData.json');
 
+
 router.get('/', async (req, res) => {
   try {
-    // Get all dogs and JOIN with user data
-    // const dogsData = await Dog.findAll({
-    //   include: [
-    //     {
-    //       model: User,
-    //       attributes: ['name'],
-    //     },
-    //   ],
-    // });
-
-    // Serialize data so the template can read it
-    // const dogs = dogsData.map((dog) => dog.get({ plain: true }));
-
-    //filter dogs array for conditions when needed
-    //dogs = dogs.filter(dog => dog.age > 9)
-    // Pass serialized data and session flag into template
     console.log(req.session);
     res.render('homepage.handlebars', {
-      // dogs,
       session: req.session,
     });
 
@@ -51,45 +35,30 @@ router.get('/dogs', async (req, res) => {
   }
 });
 
-//FROM EARLIER EVANS SECTION FILTERING BY AGE STILL NEEDS WORK-----
-// router.get('/dogs', async (req, res) => {
-//   try {
-//     const userId = req.session.user_id;
+//FROM EARLIER EVANS SECTION FILTERING BY AGE-----
+router.get('/dogs', async (req, res) => {
+  try {
+    const allowSenior = req.session?.allowSenior;
 
-//     // Find the user with the given ID
-//     const user = await User.findByPk(userId, {
-//       attributes: ['allowSenior'],
-//     });
+    // Read the dog data from the JSON file
+    const data = await fs.readFile(dataPath, 'utf8');
+    let dogs = JSON.parse(data);
 
-//     if (!user) {
-//       return res.status(404).json({ message: 'No user found with this id!' });
-//     }
+    // filter senior dogs if need be
+    if (req.session.logged_in && !allowSenior) {
+      dogs = dogs.filter(dog => dog.age < 9);
+    }
 
-//     // Get the allowSenior flag from the user
-//     const allowSenior = user.allowSenior;
-//     // Define the where condition based on the allowSenior flag
-//     const whereCondition = allowSenior ? {} : { age: { [Op.lt]: 9 } };
-
-//     // Fetch dogs based on the allowSenior flag
-//     const dogsData = await Dog.findAll({
-//       where: whereCondition,
-//     });
-
-//     const dogs = dogsData.map((dog) => dog.get({ plain: true }));
-//     console.log('Dogs:', dogs);
-
-//     console.log('Dogs:', dogs);
-//     // Render the page with the dogs information
-//     res.render('dogs.handlebars', {
-//       dogs, // Pass the enhanced dogs array
-//       session: req.session,
-//     });
-//   } catch (err) {
-//     console.error('Error:', err);
-//     res.status(500).json({ error: 'Failed to load dog data' });
-//   }
-// });
-
+    // Render the page with the dogs information
+    res.render('dogs', { 
+      dogs, 
+      session: req.session
+    });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).send({ error: 'Failed to load dog data' });
+  }
+});
 
 router.get('/dog/:id', async (req, res) => {
   try {
