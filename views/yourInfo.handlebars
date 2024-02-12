@@ -85,12 +85,12 @@
                         <label class="label">Are You Interested in Fostering a Senior Dog?</label>
                         <div class="control">
                             <label class="radio">
-                                <input type="radio" name="fostering" value="yes" required>
+                                <input type="radio" name="allowSenior" value="true" required>
                                 Yes
                             </label>
                             <label class="radio">
-                                <input type="radio" name="fostering" 
-                                value="no" required>
+                                <input type="radio" name="allowSenior" 
+                                value="false" required>
                                 No
                             </label>
                         </div>
@@ -114,30 +114,6 @@
 </section>
 
 <script src="/js/users.js"></script>
-<script>
-    // Add an event listener for form submission
-    document.getElementById('get-started-form').addEventListener('submit', function(event) {
-        // Prevent the default form submission
-        event.preventDefault();
-
-        // Collect the form data using FormData object
-        var formData = new FormData(this);
-
-        // Send the form data to the server using fetch API
-        fetch(this.action, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Redirect based on the server response
-            if (data.redirectTo) {
-                window.location.href = data.redirectTo;
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });
-</script>
 
 </body>
 </html>
