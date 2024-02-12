@@ -4,19 +4,7 @@ const withAuth = require('../utils/auth');
 const { Dog, User } = require('../models');
 const { Op, json } = require('sequelize');
 const path = require('path');
-const dataPath = path.join(__dirname, '..', '..', 'seeds', 'dogData.json');
-
-// // Helper function to read dog data from JSON file
-// async function getDogData() {
-//   const dogDataJson = await fs.readFile('dogData.json', 'utf8');
-//   return JSON.parse(dogDataJson);
-// }
-
-// // Helper function to find a dog by id from JSON data
-// async function findDogById(id) {
-//   const dogs = await getDogData();
-//   return dogs.find(dog => dog.id.toString() === id);
-// }
+const dataPath = path.join(__dirname, '..', 'seeds', 'dogData.json');
 
 router.get('/', async (req, res) => {
   try {
@@ -54,17 +42,16 @@ router.get('/', async (req, res) => {
 
 router.get('/dogs', async (req, res) => {
   try {
-    // Assuming dogData.json is located at the root of your project
     const data = await fs.readFile(dataPath, 'utf8');
     const dogs = JSON.parse(data);
-    res.render('dogs', { dogs }); // Make sure your Handlebars file is named dogs.handlebars
+    res.render('dogs', { dogs }); 
   } catch (err) {
     console.error('Error loading dog data:', err);
     res.status(500).send({ error: 'Failed to load dog data' });
   }
 });
 
-//FROM EARLIER EVANS SECTION FILTERING BY AGE-----
+//FROM EARLIER EVANS SECTION FILTERING BY AGE STILL NEEDS WORK-----
 // router.get('/dogs', async (req, res) => {
 //   try {
 //     const userId = req.session.user_id;
@@ -180,4 +167,3 @@ router.get('/getStarted', async (req, res) => {
 
 
 module.exports = router;
-
