@@ -8,6 +8,7 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const helpers = require('./utils/helpers');
 const cors = require('cors');
+const cookieParser = require('cookie-parser'); // Add this line
 
 const sequelize = require('./config/connection.js');
 
@@ -15,13 +16,14 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const hbs = exphbs({
   helpers: helpers,
   extname: '.handlebars', // extension name
   defaultLayout: 'main', // default layout
   layoutsDir: path.join(__dirname, 'views/layouts'), //layouts directory
-  partialsDir: path.join(__dirname, 'views/partials') // partials directory
+  partialsDir: path.join(__dirname, 'views/partials'), // partials directory
 });
 
 // Register `hbs.engine` with the Express app
@@ -44,27 +46,40 @@ app.use(
 );
 
 // Serve static files from the 'public' directory
-app.use(express.static('public', {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css');
-    }
-  }
-}));
+app.use(
+  express.static('public', {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+      }
+    },
+  })
+);
 // Update your session configuration
-app.use(session({
-  secret: process.env.SESSION_SECRET, // Set a session secret in your .env file
-  store: new SequelizeStore({
-    db: sequelize,
-  }),
-  resave: false,
-  saveUninitialized: false, 
-  cookie: {
-    secure: process.env.NODE_ENV === 'production', 
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET, // Set a session secret in your .env file
+    store: new SequelizeStore({
+      db: sequelize,
+    }),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  })
+);
 
+app.get('/setcookie', (req, res) => {
+  res.cookie('cookieName', 'cookieValue', { maxAge: 900000, httpOnly: true });
+  res.send('Cookie has been set');
+});
+
+app.get('/getcookie', (req, res) => {
+  const value = req.cookies['cookieName'];
+  res.send(`Cookie value is: ${value}`);
+});
 // Define a route for the root path to render the 'homepage' view
 app.get('/', (req, res) => {
   res.render('homepage', { title: 'Fur-Ever Friends' });
@@ -86,7 +101,6 @@ app.use('/api', apiRoutes);
 app.get('/api/dogs', (req, res) => {
   res.sendFile(path.join(__dirname, 'seeds', 'dogData.json'));
 });
-
 
 // Define routes
 app.use('/', viewRoutes);
