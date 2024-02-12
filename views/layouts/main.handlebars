@@ -1,42 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FurEver Friends</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
-  <link rel="stylesheet" href="/css/jass.css">
-  <link rel="stylesheet" href="/Assets/css/style.css">
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="Assets/css/style.css"> 
 </head>
-
 <body>
-  <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-      <img src="./Assets/Images/Logo.png" alt="FurEver Friends Logo">
-    </div>
-  <div class="navbar-center">
-    <p class="title">FurEver Friends</p> 
-  </div>
-  <div class="navbar-end">
-    <a class="navbar-item" href="/login">Login</a>
-    <a class="navbar-item" id="about-us-button" href="#">About Us</a>
-    <a class="navbar-item" id="logout">Logout</a>
-  </div>
-  </nav>
+  {{ navbar }}
 
-    </header>
-    
-    <main class="container container-fluid mt-5">
-      <!-- Render the sub layout -->
-      {{{ body }}}
-    </main>
-    <footer>
-      
-    </footer>
-  </div>
-
-  <!-- Render script for logged in users only -->
+    {{{body}}}
+</body>
+<!-- Render script for logged in users only -->
   {{#if logged_in}}
 <script src="/js/logout.js">
       document.addEventListener('DOMContentLoaded', () => {
@@ -61,6 +37,5 @@
     });
   </script>
   {{/if}}
-</body>
-
 </html>
+

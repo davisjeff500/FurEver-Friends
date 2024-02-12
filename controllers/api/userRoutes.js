@@ -1,6 +1,9 @@
-const router = require('express').Router();
+const express = require('express');
+const bcrypt = require('bcrypt'); // to hash passwords
+const router = express.Router();
 const { User } = require('../../models');
 
+// Route for handling the form submission
 router.post('/get-started-form', async (req, res) => {
   const {
     name,
@@ -8,51 +11,33 @@ router.post('/get-started-form', async (req, res) => {
     email,
     password,
     fostering,
-    hasPets,
-    fencedYard,
-    hasKids,
-    previousExp,
-    anythingElse,
-    why,
   } = req.body;
 
   try {
+    const hashedPassword = await bcrypt.hash(password, 10); // hash the password
     const newUser = await User.create({
       name,
       userName,
       email,
-      password,
+      password: hashedPassword,
       fostering,
-      hasPets,
-      fencedYard,
-      hasKids,
-      previousExp,
-      anythingElse,
-      why,
     });
-
-    res.send('Success!');
-  } catch (err) {
-    res.status(400).json(err);
-  }
-});
-
-//api/users/
-router.post('/', async (req, res) => {
-  try {
-    const userData = await User.create(req.body);// req.body grabs all inputs no need to itemize
 
     req.session.save(() => {
-      req.session.user_id = userData.id;
+      req.session.user_id = newUser.id;
       req.session.logged_in = true;
 
-      res.status(200).json(userData);
+      // Redirect based on the fostering senior dogs response
+      res.json({ redirectTo: fostering === 'yes' ? '/allDogs' : '/youngDogs' });
     });
   } catch (err) {
-    console.error(err.errors);
-    console.error(err.message);
-    console.error(err.stack);
-    res.status(400).json(err);
+    if (err.name === 'SequelizeValidationError') {
+      const validationErrors = err.errors.map((error) => error.message);
+      res.status(400).json({ errors: validationErrors });
+    } else {
+      console.error(err);
+      res.status(500).json({ error: 'An internal server error occurred.' });
+    }
   }
 });
 
@@ -61,18 +46,14 @@ router.post('/login', async (req, res) => {
     const userData = await User.findOne({ where: { email: req.body.email } });
 
     if (!userData) {
-      res
-        .status(400)
-        .json({ message: 'Incorrect email or password, please try again' });
+      res.status(400).json({ message: 'Incorrect email or password, please try again' });
       return;
     }
 
     const validPassword = await userData.checkPassword(req.body.password);
 
     if (!validPassword) {
-      res
-        .status(400)
-        .json({ message: 'Incorrect email or password, please try again' });
+      res.status(400).json({ message: 'Incorrect email or password, please try again' });
       return;
     }
 

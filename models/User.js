@@ -39,46 +39,11 @@ User.init(
         len: [8],
       },
     },
-    hasPets: {
-      type: DataTypes.INTEGER,
-      //allowNull: false,
-      defaultValue: 1,
-      validate: {
-        min: 1,
-        max: 4,
-      },
-    },
-    fencedYard: {
-      // all, size
-      type: DataTypes.BOOLEAN,
-      // allowNull: false,
-    },
-    hasKids: {
-      /// kidFriendly
-      type: DataTypes.BOOLEAN,
-      // allowNull: false,
-    },
+    
     fostering: {
       /// age > 9
       type: DataTypes.BOOLEAN,
       // allowNull: false,
-    },
-    previousExp: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 1,
-      validate: {
-        min: 1,
-        max: 4,
-      },
-    },
-    anythingElse: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    why: {
-      type: DataTypes.TEXT,
-      allowNull: true,
     },
   },
   {

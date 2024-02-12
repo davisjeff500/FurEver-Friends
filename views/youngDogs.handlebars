@@ -1,9 +1,20 @@
-<h2>Non Senior Dogs</h2>
+{{!-- youngDogs.handlebars --}}
+<div class="carousel-container">
+  <button class="carousel-arrow left-arrow"><i class="fas fa-chevron-left"></i></button>
+  <div class="carousel-content">
+    {{#each dogs}}
+      {{> dogCard this}}
+    {{/each}}
+  </div>
+  <button class="carousel-arrow right-arrow"><i class="fas fa-chevron-right"></i></button>
+</div>
 
-{{#each youngDogs}}
-<h2>{{name}}</h2>
-<h2>{{description}}</h2>
-<h2>Age: {{age}}</h2>
-<h2>Kid Friendly? {{kidFriendly}}</h2>
+<!-- Saved pets section here -->
+<div class="title-box" id="saved-pets-section" style="display: none;">
+  <h1 class="title is-1">Favorited Dogs</h1>
+  <div id="saved-pets-container">
+    <!-- Favorited dogs will be inserted here by the JavaScript -->
+  </div>
+</div>
 
-{{/each}}
+<script src="/js/dogcards.js"></script>
