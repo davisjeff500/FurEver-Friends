@@ -30,13 +30,12 @@ router.post('/get-started-form', async (req, res) => {
 
     //  validation error messages were causing it to crash so tried to clean that up
   } catch (err) {
-    // if (err.name === 'SequelizeValidationError') {
-    //   const validationErrors = err.errors.map((error) => error.message);
-    //   res.status(400).json({ errors: validationErrors });
-    // } else {
-    console.error(err);
-    res.status(500).json({ error: 'An internal server error occurred.' });
-    // }
+    if (err.name === 'SequelizeUniqueConstraintError') {
+      res.status(400).json({ error: 'email must be unique' });
+    } else {
+      console.error(err);
+      res.status(500).json({ error: 'An internal server error occurred.' });
+    }
   }
 });
 
