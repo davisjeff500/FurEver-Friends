@@ -84,6 +84,8 @@ if (!userData) {
     .status(400)
     .json({ message: 'Incorrect email or password, please try again' });
   return;
+} else {
+  console.log('valid user');
 }
 
 const validPassword = await userData.checkPassword(req.body.password);
@@ -93,6 +95,8 @@ if (!validPassword) {
     .status(400)
     .json({ message: 'Incorrect email or password, please try again' });
   return;
+} else {
+  console.log('valid password');
 }
 
 req.session.save(() => {
