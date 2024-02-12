@@ -18,9 +18,9 @@
     </div>
 </nav>
 
-<div class="carousel">
-  <button class="carousel-button left"> < </button>
-  <div class="carousel-content">
+<section class="carousel-container">
+    <button class="carousel-arrow left-arrow"><i class="fas fa-chevron-left"></i></button>
+    <div class="carousel-content">
     {{#each dogs}}
       <div class="card" data-name="{{name}}">
     <header class="card-header">
@@ -54,10 +54,17 @@
     </div>
     </div>
     {{/each}}
-</div>
-  <button class="carousel-button right"> > </button>
-</div>
+ </div>
+    <button class="carousel-arrow right-arrow"><i class="fas fa-chevron-right"></i></button>
+</section>
+<!--saved dogs container-->
+<div class="title-box" id="saved-pets-section" style="display: none;">
+    <h1 class="title is-1">Favorited Dogs</h1>
+    <div id="saved-pets-container">
+      <!--dynamically inserted-->
 
+    </div>
+</div>
 </body>
 
 <script src="/js/dogcards.js"></script>
