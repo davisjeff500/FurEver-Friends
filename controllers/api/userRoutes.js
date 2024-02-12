@@ -21,24 +21,6 @@ router.post('/get-started-form', async (req, res) => {
       allowSenior,
     });
 
-    // router.post('/', async (req, res) => {
-    //   try {
-    //     const userData = await User.create(req.body);
-
-    //     req.session.save(() => {
-    //       req.session.user_id = userData.id;
-    //       req.session.logged_in = true;
-
-    //       res.status(200).json(userData);
-    //     });
-    //   } catch (err) {
-    //     console.error(err.errors);
-    //     console.error(err.message);
-    //     console.error(err.stack);
-    //     res.status(400).json(err);
-    //   }
-    // });
-
     req.session.save(() => {
       req.session.user_id = newUser.id;
       req.session.logged_in = true;
