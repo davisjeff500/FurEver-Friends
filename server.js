@@ -8,6 +8,7 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const helpers = require('./utils/helpers');
 const cors = require('cors');
+const routes = require('./controllers');
 
 const sequelize = require('./config/connection.js');
 
@@ -31,6 +32,7 @@ app.set('view engine', 'handlebars');
 // Log every request
 app.use((req, res, next) => {
   console.log(`Received ${req.method} request to ${req.url}`);
+  res.locals.session = req.session; // Add session data to all templates
   next();
 });
 
@@ -65,31 +67,33 @@ app.use(session({
   }
 }));
 
+app.use(routes); // Use the routes defined in the 'controllers' directory
+
 // Define a route for the root path to render the 'homepage' view
-app.get('/', (req, res) => {
-  res.render('homepage', { title: 'Fur-Ever Friends' });
-});
+// app.get('/', (req, res) => {
+//   res.render('homepage', { title: 'Fur-Ever Friends', session: req.session });
+// });
 
-// Include routes
-const userRoutes = require('./controllers/api/userRoutes');
-app.use('/api/users', userRoutes);
+// // Include routes
+// const userRoutes = require('./controllers/api/userRoutes');
+// app.use('/api/users', userRoutes);
 
-const viewRoutes = require('./controllers/views');
+// const viewRoutes = require('./controllers/views');
 
-const homeRoutes = require('./controllers/homeRoutes');
-app.use('/', homeRoutes);
-// For API routes
-const apiRoutes = require('./controllers/api/index'); // might need to adjust path here
-app.use('/api', apiRoutes);
+// const homeRoutes = require('./controllers/homeRoutes');
+// app.use('/', homeRoutes);
+// // For API routes
+// const apiRoutes = require('./controllers/api/index'); // might need to adjust path here
+// app.use('/api', apiRoutes);
 
-// Route to serve dog data
-app.get('/api/dogs', (req, res) => {
-  res.sendFile(path.join(__dirname, 'seeds', 'dogData.json'));
-});
+// // Route to serve dog data
+// app.get('/api/dogs', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'seeds', 'dogData.json'));
+// });
 
 
-// Define routes
-app.use('/', viewRoutes);
+// // Define routes
+// app.use('/', viewRoutes);
 
 const PORT = process.env.PORT || 5502;
 sequelize
