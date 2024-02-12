@@ -1,6 +1,19 @@
+const fs = require('fs').promises;
 const router = require('express').Router();
-const { Dog, User } = require('../models');
 const withAuth = require('../utils/auth');
+
+// Helper function to read dog data from JSON file
+async function getDogData() {
+  const dogDataJson = await fs.readFile('dogData.json', 'utf8');
+  return JSON.parse(dogDataJson);
+}
+
+// Helper function to find a dog by id from JSON data
+async function findDogById(id) {
+  const dogs = await getDogData();
+  return dogs.find(dog => dog.id.toString() === id);
+}
+
 
 router.get('/', async (req, res) => {
   try {
@@ -28,7 +41,7 @@ router.get('/', async (req, res) => {
 
     console.log('Rendered homepage');
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ error: 'Failed to load dog data' });
   }
 });
 
@@ -54,7 +67,7 @@ router.get('/alldogs', async (req, res) => {
       session: req.session,
     });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ error: 'Failed to load dog data' });
   }
 });
 
@@ -84,7 +97,7 @@ router.get('/youngDogs', async (req, res) => {
       session: req.session,
     });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ error: 'Failed to load young dogs data' });
   }
 });
 
@@ -109,7 +122,6 @@ router.get('/dog/:id', async (req, res) => {
     res.status(500).json(err);
   }
 });
-
 //if user is not logged in they are directed to login page
 router.get('/profile', withAuth, async (req, res) => {
   try {
@@ -176,11 +188,10 @@ router.get('/login', (req, res) => {
   res.render('login');
 });
 
+// Added route for "Get Started" page to render the form
 router.get('/getStarted', async (req, res) => {
   try {
-    console.log('Get Started');
-
-    res.render('yourInfo.handlebars');
+    res.render('yourInfo'); 
   } catch (err) {
     res.status(500).json(err);
   }
