@@ -4,74 +4,57 @@ const { User } = require('../../models');
 
 // Route for handling the form submission
 router.post('/get-started-form', async (req, res) => {
-  const {
-    name,
-    userName,
-    email,
-    password,
-    fostering,
-    hasPets,
-    fencedYard,
-    hasKids,
-    previousExp,
-    anythingElse,
-    why,
-  } = req.body;
+  console.log(`Form submitted: ${JSON.stringify(req.body)}`);
+
+  const name = req.body.name;
+  const username = req.body.username;
+  const email = req.body.email;
+  const password = req.body.password;
+  const allowSenior = req.body.allowSenior;
 
   try {
     const newUser = await User.create({
       name,
-      userName,
+      username,
       email,
-      password, // Need to make sure we hash the password before saving it
-      fostering,
-      hasPets,
-      fencedYard,
-      hasKids,
-      previousExp,
-      anythingElse,
-      why,
+      password,
+      allowSenior,
     });
 
-    router.post('/', async (req, res) => {
-      try {
-        const userData = await User.create(req.body);
+    // router.post('/', async (req, res) => {
+    //   try {
+    //     const userData = await User.create(req.body);
 
-        req.session.save(() => {
-          req.session.user_id = userData.id;
-          req.session.logged_in = true;
+    //     req.session.save(() => {
+    //       req.session.user_id = userData.id;
+    //       req.session.logged_in = true;
 
-          res.status(200).json(userData);
-        });
-      } catch (err) {
-        console.error(err.errors);
-        console.error(err.message);
-        console.error(err.stack);
-        res.status(400).json(err);
-      }
-    });
+    //       res.status(200).json(userData);
+    //     });
+    //   } catch (err) {
+    //     console.error(err.errors);
+    //     console.error(err.message);
+    //     console.error(err.stack);
+    //     res.status(400).json(err);
+    //   }
+    // });
 
     req.session.save(() => {
       req.session.user_id = newUser.id;
       req.session.logged_in = true;
 
-      // Redirect based on the fostering senior dogs response
-      if (fostering === 'yes') {
-        res.json({ redirectTo: '/allDogs' });
-      } else {
-        res.json({ redirectTo: '/youngDogs' });
-      }
+      res.status(200).json(newUser);
     });
 
     //  validation error messages were causing it to crash so tried to clean that up
   } catch (err) {
-    if (err.name === 'SequelizeValidationError') {
-      const validationErrors = err.errors.map((error) => error.message);
-      res.status(400).json({ errors: validationErrors });
-    } else {
-      console.error(err);
-      res.status(500).json({ error: 'An internal server error occurred.' });
-    }
+    // if (err.name === 'SequelizeValidationError') {
+    //   const validationErrors = err.errors.map((error) => error.message);
+    //   res.status(400).json({ errors: validationErrors });
+    // } else {
+    console.error(err);
+    res.status(500).json({ error: 'An internal server error occurred.' });
+    // }
   }
 });
 
@@ -103,7 +86,9 @@ router.post('/login', async (req, res) => {
       req.session.user_id = userData.id;
       req.session.logged_in = true;
 
-      res.json({ user: userData, message: 'You are now logged in!' });
+      res
+        .status(200)
+        .json({ user: userData, message: 'You are now logged in!' });
     });
   } catch (err) {
     res.status(400).json(err);

@@ -1,41 +1,42 @@
-const fs = require('fs').promises;
+// const fs = require('fs').promises;
 const router = require('express').Router();
 const withAuth = require('../utils/auth');
+const { Dog, User } = require('../models');
+const { Op, json } = require('sequelize');
 
-// Helper function to read dog data from JSON file
-async function getDogData() {
-  const dogDataJson = await fs.readFile('dogData.json', 'utf8');
-  return JSON.parse(dogDataJson);
-}
+// // Helper function to read dog data from JSON file
+// async function getDogData() {
+//   const dogDataJson = await fs.readFile('dogData.json', 'utf8');
+//   return JSON.parse(dogDataJson);
+// }
 
-// Helper function to find a dog by id from JSON data
-async function findDogById(id) {
-  const dogs = await getDogData();
-  return dogs.find(dog => dog.id.toString() === id);
-}
-
+// // Helper function to find a dog by id from JSON data
+// async function findDogById(id) {
+//   const dogs = await getDogData();
+//   return dogs.find(dog => dog.id.toString() === id);
+// }
 
 router.get('/', async (req, res) => {
   try {
     // Get all dogs and JOIN with user data
-    const dogsData = await Dog.findAll({
-      include: [
-        {
-          model: User,
-          attributes: ['name'],
-        },
-      ],
-    });
+    // const dogsData = await Dog.findAll({
+    //   include: [
+    //     {
+    //       model: User,
+    //       attributes: ['name'],
+    //     },
+    //   ],
+    // });
 
     // Serialize data so the template can read it
-    const dogs = dogsData.map((dog) => dog.get({ plain: true }));
+    // const dogs = dogsData.map((dog) => dog.get({ plain: true }));
 
     //filter dogs array for conditions when needed
     //dogs = dogs.filter(dog => dog.age > 9)
     // Pass serialized data and session flag into template
     console.log(req.session);
     res.render('homepage.handlebars', {
-      dogs,
+      // dogs,
       session: req.session,
     });
 
@@ -101,6 +102,114 @@ router.get('/youngDogs', async (req, res) => {
   }
 });
 
+// router.get('/dogs', async (req, res) => {
+//   try {
+//     // Get all dogs and JOIN with user data
+//     // Filter old and young dogs based off of user allowSenior
+//     let dogsData;
+
+//     const user = await User.findByPk(req.session.user_id, {
+//       attributes: ['allowSenior'],
+//     });
+
+//     if (!user) {
+//       return res.status(404).json({ message: 'No user found with this id!' });
+//     }
+
+//     console.log(`User: ${user}`);
+
+//     const allowSenior = user.get('allowSenior');
+
+//     console.log(`allowSenior: ${allowSenior}`);
+
+//     if (!allowSenior) {
+//       dogsData = await Dog.findAll({
+//         where: {
+//           age: {
+//             [Op.lt]: 9,
+//           },
+//         },
+//       });
+//       console.log(`Dogs: ${dogsData}`);
+//     } else {
+//       dogsData = await Dog.findAll();
+//       // console.log(`Dogs: ${dogsData}`);
+//     }
+//     // Serialize data so the template can read it
+//     const dogs = dogsData.map((dog) => dog.get({ plain: true }));
+//     // console.log(`Plain dogs: ${JSON.stringify(dogs)}`);
+//     jsonDogs = JSON.stringify(dogs);
+//     jsonDogs = JSON.parse(jsonDogs);
+
+//     // Grab breeds from jsonDogs and put them in an array
+//     const breedArray = jsonDogs.map((dog) => dog.breed);
+//     console.log(`breedArray: ${breedArray}`);
+
+//     for (let i = 0; i < breedArray.length; i++) {
+//       await fetch(`/api/dogInfo/${breedArray[i]}`, {
+//         method: 'GET',
+//       })
+//         .then((response) => response.json())
+//         .then((data) => {
+//           jsonDogs[i].average_weight = data.weight;
+//           jsonDogs[i].average_height = data.height;
+//           jsonDogs[i].life_span = data.life_span;
+//           jsonDogs[i].typical_temperament = data.temperament;
+//           jsonDogs[i].image = data.image;
+//         })
+//         .catch((error) => {
+//           console.error('Error:', error);
+//           alert('An error occurred. Please try again.');
+//         });
+//     }
+
+//     console.log(`updated jsonDogs: ${JSON.stringify(jsonDogs)}`);
+//     // Pass serialized data and session flag into template
+//     res.render('dogs.handlebars', {
+//       jsonDogs, //variable we use on handlebars
+//       session: req.session,
+//     });
+//   } catch (err) {
+//     res.status(500).json({ error: 'Failed to load dog data' });
+//   }
+// });
+
+router.get('/dogs', async (req, res) => {
+  try {
+    const userId = req.session.user_id;
+
+    // Find the user with the given ID
+    const user = await User.findByPk(userId, {
+      attributes: ['allowSenior'],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'No user found with this id!' });
+    }
+
+    const allowSenior = user.allowSenior;
+    const whereCondition = allowSenior ? {} : { age: { [Op.lt]: 9 } };
+
+    // Fetch dogs based on the allowSenior flag
+    const dogsData = await Dog.findAll({
+      where: whereCondition,
+    });
+
+    const dogs = dogsData.map((dog) => dog.get({ plain: true }));
+    console.log('Dogs:', dogs);
+
+    console.log('Dogs:', dogs);
+    // Render the page with the dogs information
+    res.render('dogs.handlebars', {
+      dogs, // Pass the enhanced dogs array
+      session: req.session,
+    });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ error: 'Failed to load dog data' });
+  }
+});
+
 router.get('/dog/:id', async (req, res) => {
   try {
     const dogData = await Project.findByPk(req.params.id, {
@@ -130,17 +239,15 @@ router.get('/profile', withAuth, async (req, res) => {
       return;
     }
     // Find the logged in user based on the session ID
-    const userData = await User.findByPk(req.session.user_id, {
-      attributes: { exclude: ['password'] },
-      include: [{ model: Dog }],
-    });
+    // const userData = await User.findByPk(req.session.user_id, {
+    //   attributes: { exclude: ['password'] },
+    //   include: [{ model: Dog }],
+    // });
 
-    const user = userData.get({ plain: true });
-    /// if ( userData.hasKids === true) {
-    // user = userData.dogs.filter(dog => dog.kidFirendy !== true) // filters out non kid friendly dogs from dog array
-    //}
+    // const user = userData.get({ plain: true });
+
     res.render('profile.handlebars', {
-      user,
+      // user,
       logged_in: true,
     });
   } catch (err) {
@@ -191,7 +298,12 @@ router.get('/login', (req, res) => {
 // Added route for "Get Started" page to render the form
 router.get('/getStarted', async (req, res) => {
   try {
-    res.render('yourInfo'); 
+    if (req.session.logged_in) {
+      res.redirect('/profile');
+      return;
+    }
+
+    res.render('yourInfo');
   } catch (err) {
     res.status(500).json(err);
   }

@@ -6,10 +6,10 @@ const userData = require('./userData.json');
 const seedDatabase = async () => {
   await sequelize.sync({ force: true });
 
-  // const dogs = await Dog.bulkCreate(dogData, {
-  //   individualHooks: true,
-  //   returning: true,
-  // });
+  const dogs = await Dog.bulkCreate(dogData, {
+    individualHooks: true,
+    returning: true,
+  });
 
   const users = await User.bulkCreate(userData, {
     individualHooks: true,

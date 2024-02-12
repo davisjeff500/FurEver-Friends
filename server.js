@@ -6,7 +6,6 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const path = require('path');
 const express = require('express');
 const exphbs = require('express-handlebars');
-const helpers = require('./utils/helpers');
 const cors = require('cors');
 const routes = require('./controllers');
 
@@ -18,11 +17,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const hbs = exphbs({
-  helpers: helpers,
   extname: '.handlebars', // extension name
   defaultLayout: 'main', // default layout
   layoutsDir: path.join(__dirname, 'views/layouts'), //layouts directory
-  partialsDir: path.join(__dirname, 'views/partials') // partials directory
+  partialsDir: path.join(__dirname, 'views/partials'), // partials directory
 });
 
 // Register `hbs.engine` with the Express app
