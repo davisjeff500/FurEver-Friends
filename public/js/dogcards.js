@@ -8,26 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     savedPetsSection.style.display = savedPetsContainer.children.length > 0 ? 'block' : 'none';
   }
 
-  // Function to fetch and display dog breed information from API
-  async function fetchAndDisplayBreedInfo(petName, breedInfoDiv) {
-    try {
-      const breedInfo = await fetch(`/api/breed-info/${petName}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      }).then(response => response.json());
-
-      breedInfoDiv.innerHTML = `
-        <h3>Breed Info</h3>
-        <strong>Average Weight:</strong> ${breedInfo.weight}<br>
-        <strong>Average Height:</strong> ${breedInfo.height}<br>
-        <strong>Typical Life Span:</strong> ${breedInfo.life_span}<br>
-        <strong>Temperament:</strong> ${breedInfo.temperament}<br>
-      `;
-      breedInfoDiv.dataset.loaded = 'true';
-    } catch (error) {
-      console.error('Error fetching breed info:', error);
-    }
-  }
 
   moreInfoButtons = document.querySelectorAll('.more-info');
 
@@ -61,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const petCard = target.closest('.card');
     const petName = petCard.dataset.name;
     const additionalInfoDiv = petCard.querySelector('.additional-info');
-    const breedInfoDiv = additionalInfoDiv.querySelector('.breed-info');
 
     if (target.matches('.heart-button, .heart-button *')) { // Check if heart button or its child is clicked
       toggleFavoriteAndMoveCard(target.closest('.heart-button'), petCard);
@@ -71,9 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const isHidden = additionalInfoDiv.classList.toggle('is-hidden');
       target.textContent = isHidden ? 'More Info' : 'Less Info';
 
-      if (!breedInfoDiv.dataset.loaded) {
-        fetchAndDisplayBreedInfo(petCard.dataset.name, breedInfoDiv);
-      }
     }
   });
 
