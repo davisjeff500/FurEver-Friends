@@ -24,7 +24,7 @@ router.post('/get-started-form', async (req, res) => {
     req.session.save(() => {
       req.session.user_id = newUser.id;
       req.session.logged_in = true;
-
+      console.log(req.session.logged_in)
       res.status(200).json(newUser);
     });
 
