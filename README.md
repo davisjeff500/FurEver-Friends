@@ -2,6 +2,11 @@
 
 FurEver Friends is a Full Stack application designed to connect prospective dog foster parents with dogs suited to their lifestyle and preferences. Users can sign up, create a profile detailing their living situation and preferences, browse available dogs with detailed information, favorite dogs, and initiate the foster parent application process.
 
+##Deployment URLS
+
+https://fur-everfriends-d073febb711a.herokuapp.com/
+https://github.com/davisjeff500/FurEver-Friends
+
 ## Features
 
 - **User Authentication**: Users can sign up with a unique username and password, with their profiles securely saved for future logins.
@@ -38,6 +43,21 @@ The application follows the MVC (Model-View-Controller) architecture, ensuring a
 3. Set up environment variables: Create a `.env` file and add necessary variables.
 4. Set up the database: Run migrations using Sequelize CLI.
 5. Start the server: `npm start`
+
+
+##Screens
+![image](https://github.com/davisjeff500/FurEver-Friends/assets/147566531/85c9d455-21b0-4a44-a2d4-edba40e96229)
+
+![image](https://github.com/davisjeff500/FurEver-Friends/assets/147566531/1f561081-4b85-4129-bfb7-90d2646c24af)
+
+![image](https://github.com/davisjeff500/FurEver-Friends/assets/147566531/f5338a79-ce34-4216-ae88-ad8be004dc69)
+
+![image](https://github.com/davisjeff500/FurEver-Friends/assets/147566531/87340382-f210-4528-a6db-2a0187094d20)
+
+
+
+
+
 
 ## Contributing
 
