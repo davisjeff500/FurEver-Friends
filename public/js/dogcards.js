@@ -5,7 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Function to update the display of the saved pets section
   function updateSavedPetsDisplay() {
-    savedPetsSection.style.display = savedPetsContainer.children.length > 0 ? 'block' : 'none';
+    if (savedPetsSection && savedPetsContainer) {
+      savedPetsSection.style.display = savedPetsContainer.children.length > 0 ? 'block' : 'none';
+    }
   }
 
 
@@ -15,9 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', (e) => {
       const name = e.target.getAttribute('data-name');
       const additionalInfo = document.getElementById(`additional-info-${name}`);
-      const breedInfo = document.getElementById(`breed-info-${name}`);
       additionalInfo.classList.toggle('is-hidden');
-      breedInfo.classList.toggle('is-hidden');
+      // Toggle button text
+      e.target.textContent = e.target.textContent === 'More Info' ? 'Less Info' : 'More Info';
     });
   });
 
@@ -29,29 +31,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (isSaved) {
       savedPetsContainer.appendChild(petCard);
+      savedPetsSection.style.display = 'block';
     } else {
+      // If the pet is unsaved, move it back to the main carousel and hide the section if it's empty
       carouselContent.appendChild(petCard);
+      if (savedPetsContainer.children.length === 0) {
+        savedPetsSection.style.display = 'none';
+      }
     }
-    updateSavedPetsDisplay();
   }
 
   // Event delegation for handling clicks within the carousel content area
   carouselContent.addEventListener('click', async (event) => {
     const target = event.target;
     const petCard = target.closest('.card');
-    const petName = petCard.dataset.name;
-    const additionalInfoDiv = petCard.querySelector('.additional-info');
-
-    if (target.matches('.heart-button, .heart-button *')) { // Check if heart button or its child is clicked
-      toggleFavoriteAndMoveCard(target.closest('.heart-button'), petCard);
-    } else if (target.matches('.more-info')) {
+    if (petCard) {
+      const petName = petCard.dataset.name;
       const additionalInfoDiv = petCard.querySelector('.additional-info');
-      const breedInfoDiv = additionalInfoDiv.querySelector('.breed-info');
-      const isHidden = additionalInfoDiv.classList.toggle('is-hidden');
-      target.textContent = isHidden ? 'More Info' : 'Less Info';
 
+      if (target.matches('.heart-button, .heart-button *')) {
+        if (savedPetsContainer) {
+          toggleFavoriteAndMoveCard(target.closest('.heart-button'), petCard);
+        }
+      } else if (target.matches('.more-info')) {
+      }
     }
   });
 
-  updateSavedPetsDisplay();
+  // Call saved pets in case there are pets in there 
+  if (savedPetsContainer) {
+    updateSavedPetsDisplay();
+  }
 });
