@@ -92,7 +92,7 @@ app.get('/api/dogs', (req, res) => {
 // Define routes
 app.use('/', viewRoutes);
 
-const PORT = process.env.PORT || 5502;
+PORT = process.env.PORT || 5502;
 sequelize
   .authenticate()
   .then(() => {
