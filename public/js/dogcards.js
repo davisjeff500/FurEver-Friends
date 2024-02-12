@@ -23,6 +23,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // For the carousel arrows
+document.querySelector('.left-arrow').addEventListener('click', () => {
+  // Scroll the carousel to the left
+  carouselContent.scrollBy({ left: -carouselContent.offsetWidth, behavior: 'smooth' });
+});
+
+document.querySelector('.right-arrow').addEventListener('click', () => {
+  // Scroll the carousel to the right
+  carouselContent.scrollBy({ left: carouselContent.offsetWidth, behavior: 'smooth' });
+});
+
   // Function to toggle favorite status and move card
   function toggleFavoriteAndMoveCard(heartBtn, petCard) {
     heartBtn.classList.toggle('saved');
@@ -33,33 +44,25 @@ document.addEventListener('DOMContentLoaded', () => {
       savedPetsContainer.appendChild(petCard);
       savedPetsSection.style.display = 'block';
     } else {
-      // If the pet is unsaved, move it back to the main carousel and hide the section if it's empty
       carouselContent.appendChild(petCard);
       if (savedPetsContainer.children.length === 0) {
         savedPetsSection.style.display = 'none';
       }
     }
+    updateSavedPetsDisplay();
   }
 
-  // Event delegation for handling clicks within the carousel content area
-  carouselContent.addEventListener('click', async (event) => {
+  // Event delegation for the carousel content area
+  carouselContent.addEventListener('click', (event) => {
     const target = event.target;
     const petCard = target.closest('.card');
     if (petCard) {
-      const petName = petCard.dataset.name;
-      const additionalInfoDiv = petCard.querySelector('.additional-info');
-
       if (target.matches('.heart-button, .heart-button *')) {
-        if (savedPetsContainer) {
-          toggleFavoriteAndMoveCard(target.closest('.heart-button'), petCard);
-        }
-      } else if (target.matches('.more-info')) {
+        toggleFavoriteAndMoveCard(target.closest('.heart-button'), petCard);
       }
     }
   });
 
-  // Call saved pets in case there are pets in there 
-  if (savedPetsContainer) {
-    updateSavedPetsDisplay();
-  }
+  // Initial call to update the display of the saved pets section
+  updateSavedPetsDisplay();
 });
