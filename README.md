@@ -56,6 +56,19 @@ The application follows the MVC (Model-View-Controller) architecture, ensuring a
 
 ![image](https://github.com/davisjeff500/FurEver-Friends/assets/147566531/87340382-f210-4528-a6db-2a0187094d20)
 
+![image](https://github.com/davisjeff500/FurEver-Friends/assets/147566531/a4c8acc2-53a2-4856-94e0-77fed62c6488)
+
+![image](https://github.com/davisjeff500/FurEver-Friends/assets/147566531/0b0741a3-ee81-4b00-9a00-40a01952c720)
+
+![image](https://github.com/davisjeff500/FurEver-Friends/assets/147566531/c00d326c-04e9-48c6-829b-35b622970fbd)
+
+![image](https://github.com/davisjeff500/FurEver-Friends/assets/147566531/97dbb3cd-8986-424a-94e9-3f83e46c12d3)
+
+
+
+
+
+
 
 
 
